@@ -1,0 +1,123 @@
+
+
+.parentDiv {  
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  text-align: center;
+  z-index: 1;}
+  
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 0px 20px 0px;
+    font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+    font-size: 16px;
+    height: 100vh;
+    /* color:#777; */
+    color: black;
+    background-color: #2e2f33;
+    min-height: 100vh;
+
+    
+}
+
+
+::-webkit-scrollbar {display:none;}
+.content {
+ /* border: 1px solid grey;
+  border-radius: 3px; */
+
+  /*max-height: 700px;*/
+
+  height: 80vh;
+  width: 95vw;
+  /* max-width: 480px; */
+  display: flex;
+  flex-direction: column;
+  /* padding: 20px 20px 20px 20px; */
+  padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    max-width: 400px;
+    width: 100%;
+    /* max-height: 550px; */
+    background-color: #444654;
+}
+
+.messages {
+  flex-grow: 1;
+  padding: 20px 30px;
+  position: relative;
+  overflow: auto; 
+  /* Hide scrollbars */
+}
+.message {
+  display: flex;
+  flex-direction: column;
+}
+.mine {
+  align-items: flex-start;
+}
+.theirs {
+  align-items: flex-start;
+}
+.message__name {
+  padding-top: 10px;
+  font-size: 70%;
+  color: rgb(23, 196, 196);
+
+  cursor: pointer; 
+  transform: translate(5%, 5%); 
+}
+.message__bubble {
+  padding: 15px;
+  border-radius: 5px;
+  word-break: break-word;  /* this will break long words e.g. urls */   
+  box-shadow: rgba(0, 0, 0, 0.4) 0px 8px 8px;
+}
+.theirs .message__bubble {
+  background: #265f6c;
+  color: rgb(255, 255, 255);
+
+
+  /* mix-blend-mode: multiply; */
+}
+
+.mine .message__bubble {
+  background: #aea;
+  color: rgb(255, 255, 255);
+}
+
+
+.footer {
+  line-height: 76px;
+  border-top: 1px solid rgba(156, 172, 172, 0.2);
+  display: flex;
+  flex-shrink: 0;
+}
+input {
+  height: 76px;
+  border: none;
+  flex-grow: 1;
+  padding: 0 15px;
+  font-size: 16px;
+  background: transparent;
+  /* color:#777; */
+  color: black;
+  z-index: 10;
+}
+.send_button {
+  border: none;
+  background: #6B6C7B;
+  color: black;
+  border-radius:  0 0 5px 0 ;
+  padding: 0 25px;
+  height: 100%;
+  font-size: 16px;
+  box-shadow: none;
+  z-index: 10;
+}
