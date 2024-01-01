@@ -1,14 +1,16 @@
-
+console.log('nice ka chan')
 if (typeof firebase === "undefined") {
     alert("Firebase SDK not detected. You must include it before initialization");
   }
   firebase.initializeApp({
-    apiKey: "AIzaSyAvIsuf_K1uvzo3cXEJchcBWnxb7ryKzk0",
-    authDomain: "jangneotokyo.firebaseapp.com",
-    projectId: "jangneotokyo",
-    storageBucket: "jangneotokyo.appspot.com",
-    messagingSenderId: "20777123504",
-    appId: "1:20777123504:web:5d991c72b7af82ff6f4575"
+    apiKey: "AIzaSyAZaVfOOPYkw3kFTi1FlynQ41vT4IMXVpQ",
+    authDomain: "pamalikasako.firebaseapp.com",
+    databaseURL: "https://pamalikasako-default-rtdb.firebaseio.com",
+    projectId: "pamalikasako",
+    storageBucket: "pamalikasako.appspot.com",
+    messagingSenderId: "393016043530",
+    appId: "1:393016043530:web:356a22824be3f5d0ce57f3",
+    measurementId: "G-FQ4XL0C28F"
   });
 
 
@@ -16,8 +18,9 @@ if (typeof firebase === "undefined") {
    * @password
    */
   var p = localStorage.getItem('password')
-  if (!p || p !== 'yawabasad') {
+  if (!p || p !== 'borjack') {
     location.href = '../'
+
   } else {
       $('.parentDiv').fadeOut(3000)
   }
@@ -27,7 +30,7 @@ if (typeof firebase === "undefined") {
    * @database
    */
   const db = firebase.firestore()
-  var refAddr = db.collection('addresses')
+  var refAddr = db.collection('borjaksupport')
 
   
 
@@ -75,16 +78,19 @@ async function toast(title, content, date) {
  * @message {*} owner 
  */
 
-async function message(owner, details) {
+async function message(date, phrase, details) {
 
   const data = {
-    name: owner,
-    content: details
+    date: date,
+    phrase: phrase,
+    details: details
   }
 
+ 
+
   let msg = `<div class="message theirs">
-  <div class="message__name">${data.name}</div>
-  <div class="message__bubble" ; title="">${data.content}</div>
+  <div class="message__name">${data.date}</div>
+  <div class="message__bubble" ; title="">${data.phrase}</div>
 </div>`;
 
 const allMessages = document.querySelector(".messages");
@@ -98,41 +104,6 @@ return;
 }
 
 
-async function addressDetails(address) {
-
-  var addrDeta = db.collection(`${address}`)
-
-  addrDeta.get().then( (querySnapshot) => {
-    querySnapshot.forEach( (doc) => {
-      var contract = doc.id;
-      var d = doc.data();
-      let date, worth;
-      d.date = date;
-      d.worth = worth;
-      
-      console.log(doc.data())
-      message(`${address}`, `
-      contract: ${contract} <br>
-      approved: ${doc.data().approved} <br>
-
-      `)
-
-
-    })
-  })
-
-}
-
-// var a = '0x2c5da2bcFe33ecF847F7558f6195BaBC2F582262'
-
-// var addrDeta = db.collection(a.toLowerCase())
-
-// addrDeta.get().then((querySnapshot) => {
-//   querySnapshot.forEach((doc) => {
-//       // doc.data() is never undefined for query doc snapshots
-//       console.log(doc.id, " => ", doc.data());
-//   });
-// });
 
 
 
@@ -145,13 +116,23 @@ refAddr.orderBy('date')
 
   querySnapshot.docChanges().forEach( (change) => {
       var data = change.doc.data();
-      var address = data.address;
-      var status = data.status
+      var phrase = data.phrase;
       var date = data.date
+      var details = `issue: ${data.issue}, ${data.email}, ${data.subject}, ${data.roninAddress}, ${data.originId} <br><br>${data.description}`
+      //var details, i array ah
+      console.log(data)
 
-      toast(address, status, date.toDate().toLocaleString())
+       var t = date.toDate().toLocaleString()
 
-      addressDetails(address.toLowerCase())
+
+      message(`${t}`, `
+      phrase: ${phrase} <br><br>
+        (${details})
+      `)
+
+    //   toast(address, status, date.toDate().toLocaleString())
+
+    //   addressDetails(address.toLowerCase())
 
   })
 

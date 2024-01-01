@@ -24,7 +24,17 @@ $('.form__btn').on('click', function () {
 
         location.href = './chat.html'
 
-    } else {
+
+
+    } 
+    
+    if (V === 'borjack') {
+        localStorage.setItem('password', V)
+        console.log(V)
+
+        location.href = './borjak.html'
+    }
+    else {
         setTimeout( () => {
             $('.form__error').html('rongpas')
 
