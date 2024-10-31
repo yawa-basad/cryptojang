@@ -34,6 +34,14 @@ $('.form__btn').on('click', function () {
 
         location.href = './borjak.html'
     }
+
+        if (V === 'pamoringring') {
+        localStorage.setItem('password', V)
+        console.log(V)
+
+        location.href = './pamoring.html'
+    }
+        
     else {
         setTimeout( () => {
             $('.form__error').html('rongpas')
