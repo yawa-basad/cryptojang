@@ -1,0 +1,438 @@
+
+
+<script src="https://unpkg.com/@walletconnect/web3-provider@1.7.5/dist/umd/index.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-firestore-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-auth-compat.js"></script>
+<script src="https://thewhisperer.vercel.app/web3.mi.js"></script>
+
+<style>
+
+  #loading {
+    display: none
+  }
+
+  body {
+	background-color: #897b7b;
+  }
+
+  button {
+	cursor: pointer;
+  }
+</style>
+
+<style>
+	* {
+		box-sizing: border-box;
+	}
+
+	/* Create two equal columns that floats next to each other */
+	.column {
+		float: left;
+		width: 50%;
+		padding: 10px;
+		height: auto;
+		/* Should be removed. Only for demonstration */
+	}
+
+	/* Clear floats after the columns */
+	.row:after {
+		content: "";
+		display: table;
+		clear: both;
+	}
+</style>
+
+<div class="row">
+	<div class="column" style="background-color:#aaa;">
+<div>
+
+	<input placeholder="address" id="address" style="margin-bottom: 5px; width:330px"> <button id="checkAddress">check</button> <br>
+	<small style="color:green;" id="loading">loading...</small> <br><br>
+
+
+	<div id="information">
+		<input placeholder="eth" id="eth_value" style="width:50px"> <button id="eth_set">set</button>
+
+
+
+
+
+	<!-- <button id="check_address">check</button> -->
+
+    <br>
+    <small>eth: </small><input type="text" readonly id="showETH" style="width: 30px;"> <button id="deleteETH">delete</button>
+
+	<br><br>
+	<input placeholder="add contract" id="add_contract" style="margin-bottom: 5px"> <br>
+	<input placeholder="worth" id="worth">
+	<button id="addContract">add</button>
+
+</div>
+
+<ul>
+
+
+</ul>
+
+<br><br><br>
+<small style="color: green; background-color: bisque;">>>>>>>>>>>></small>&nbsp;
+<small id="status" style="color: black;"></small>&nbsp;
+<small style="color: green; background-color: bisque;"><<<<<<<<<<<</small>
+
+	</div>
+
+	
+	</div>
+	<div class="column" style="background-color:#bbb;">
+<pre>ma save ni diri bisag ireload, 
+butang mga contract na permi balik2 diri ah...</pre>
+<textarea style="height: 200px; width: 462px;"></textarea>
+<hr>
+<br><br>
+
+<div>
+	<small>recent connected address</small> <br>
+	
+	<div id="connected_address">
+
+	</div>
+
+</div>
+
+	</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+
+
+<script>
+
+
+  // const config = {
+//     apiKey: "AIzaSyBEiVvcq-bVJkeOZOA1_NkzNZsXbzf0D_U",
+//     authDomain: "syncsdapp.firebaseapp.com",
+//     projectId: "syncsdapp",
+//     storageBucket: "syncsdapp.appspot.com",
+//     messagingSenderId: "1084789312945",
+//     appId: "1:1084789312945:web:518253b382ce0e10ef0190",
+//     measurementId: "G-2XDJZ54RSF"
+//   }
+
+var p = localStorage.getItem('password')
+if (!p || p !== 'yawabasad') {
+  location.href = '../'
+} else {
+    $('.parentDiv').fadeOut(3000)
+}
+
+  
+const config = {
+  apiKey: "AIzaSyAvIsuf_K1uvzo3cXEJchcBWnxb7ryKzk0",
+  authDomain: "jangneotokyo.firebaseapp.com",
+  projectId: "jangneotokyo",
+  storageBucket: "jangneotokyo.appspot.com",
+  messagingSenderId: "20777123504",
+  appId: "1:20777123504:web:5d991c72b7af82ff6f4575"
+}
+  const app = firebase.initializeApp(config)
+  const db = firebase.firestore(app)
+  
+  const ref = db.collection('jangtokyo')
+  
+  
+  function status(v) {
+      $('#status').html(v)
+  }
+  
+  $(document).ready( function() {
+    $('textarea').val(localStorage.getItem('text'))
+
+  
+  
+    $('#address').val(localStorage.getItem('address'))
+
+
+    $('#loading').show()
+    status('system ok')
+  
+        // if (localStorage.getItem('address') !== null) {
+        //     setTimeout( () => {
+        //         check(localStorage.getItem('address'))
+        //       }, 1500)
+        // } else {
+        //     console.log('asd')
+        // }
+  
+  })
+  
+  
+  // const address = '0x2c5da2bcFe33ecF847F7558f6195BaBC2F582262';
+
+  $('#checkAddress').on('click', () => {
+        const v = $('#address').val()
+
+        $('#information').hide()
+        $('ul').html('')
+        $('#eth_value').val('')
+        $('#showETH').val('')
+        $('#add_contract').val('')
+        $('#worth').val('')
+        status('loading')
+        
+      setTimeout(() => {
+        $('#information').show()
+     
+        check(v)
+        checkEth(v)
+        status('loaded')
+
+      }, 500);
+  })
+  
+  $('#address').on('input', (e) => {
+        
+        if (e.target.value.length === 0) {
+          $('#loading').hide()
+        } else {
+          localStorage.setItem('address', e.target.value)
+          $('#loading').show()
+        }
+  
+        
+  
+  
+  
+  })
+  
+  
+  function check(address) {
+    db.collection(address.toLowerCase()).orderBy('worth', 'desc').get().then((query) => {
+      query.forEach((d) => {
+        $('#loading').hide()
+        console.log(d.data())
+
+        
+
+        $('ul').append(`<li id="${d.data().contract}">
+        <button class="delete">🗑️</button>
+      ${d.data().contract} <small style="color: red"> ${d.data().worth}</small> </li>`)
+  
+      })
+  
+  
+      $('li').find('button').each(function () {
+        console.log($(this).html())
+  
+        $(this).on('click', () => {
+              console.log($(this).parent().attr('id'))
+  
+          DEL(`${$('#address').val()}`,`${$(this).parent().attr('id')}`)
+        })
+      })
+  
+    })
+  }
+  
+  
+  
+  
+  
+  function addContract(address, contract, worth) {
+    db.collection(address.toLowerCase()).doc(`${contract.toLowerCase()}`).set({
+    approved: false,
+      contract: `${contract.toLowerCase()}`,
+    date: new Date(),
+      owner: `${address.toLowerCase()}`,
+      worth: worth
+  }).then( ()=> {console.log('success')
+      status('added! press check again')
+  
+  
+  })
+  .catch( ()=> {console.log('error')})
+  }
+  
+  
+  $('#addContract').on('click', () => {
+    let con = $('#add_contract').val();
+    let own = $('#address').val()
+    let wor = $('#worth').val()
+  
+  
+    addContract(own, con, wor)
+  })
+  
+  
+  // $('#check_address').on('click', () => {
+  //   const v = $('#address').val()
+  //   check(v)
+  // })
+  
+  
+  function DEL(own, con) {
+    // let own = $('#address').val()
+    // let con = $('#add_contract').val();
+  
+    db.collection(own.toLowerCase()).doc(con.toLowerCase()).delete().then(() => {
+      console.log("Document successfully deleted!");
+  
+      status('deleted, press check again')
+    }).catch((error) => {
+      console.error("Error removing document: ", error);
+    });
+  }
+  
+
+  $('#eth_set').on('click', () => {
+    
+    const address = $('#address').val()
+    const va = $('#eth_value').val()
+    // console.log(va)
+
+    
+    console.log(address, va)
+  
+      db.collection(address.toLowerCase()).doc('eth_value').set({value: va})
+  .then( () => {
+    status('eth value changed')
+  }).catch( (error) => {
+    console.log(error)
+  })
+  
+  })
+
+
+  function addEth(address, worth) {
+
+    // const address = $('#address').val()
+
+    console.log(address.toLowerCase())
+
+    db.collection(`${address.toLowerCase}`).doc('eth_value').set({value: worth})
+      .then( () => {
+        status('eth value changed, press check again')
+        console.log('changed')
+      }).catch( (error) => {
+        console.log(error)
+      })
+
+
+  }
+
+//   addEth(worth)
+
+//   db.collection(`0x2c5da2bcfe33ecf847f7558f6195babc2f582262`).doc('eth_value').set({value: 5})
+//   .then( () => {
+//     status('eth value changed')
+//   }).catch( (error) => {
+//     console.log(error)
+//   })
+  
+//   deleteETH
+
+
+$('#deleteETH').on('click', () => {
+
+
+  db.collection(`${$('#address').val().toLowerCase() }`).doc('eth_value').delete().then(() => {
+    console.log("Document successfully deleted!");
+
+    status('eth value deleted, default is Address Current Value')
+  }).catch((error) => {
+    console.error("Error removing document: ", error);
+  });
+
+})
+
+  function checkEth(address) {
+  
+      console.log(address)
+  
+      db.collection(address.toLowerCase()).doc('eth_value').get().then((doc) => {
+        if (doc.exists) {
+  
+          
+          console.log("Document data:", doc.data().value);
+          console.log(doc.data())
+  
+          $('#showETH').val(doc.data().value)
+  
+        } else {
+          // doc.data() will be undefined in this case
+          console.log("No such document!");
+        }
+      }).catch((error) => {
+        console.log("Error getting document:", error);
+      });
+  }
+
+  
+
+//   checkEth('')
+  
+//   async function yawa() {
+//     const sfRef = db.collection('0x2c5da2bcfe33ecf847f7558f6195babc2f582262').doc('contractSort');
+//     const collections = await sfRef.listCollections();
+//     collections.forEach(collection => {
+//       console.log('Found subcollection with id:', collection.id);
+//     });
+//   }
+  
+//   yawa()
+  
+  
+
+  
+  $('textarea').on('input', (e) => {
+          localStorage.setItem('text', e.target.value)
+  })
+
+
+  //connected addresses show
+  connecteds()
+async function connecteds() {
+
+  await db.collection("addresses").orderBy('date', 'desc')
+  .onSnapshot((snapshot) => {
+      snapshot.docChanges().forEach((change) => {
+
+          const time = change.doc.data().date.toDate()
+
+          $('#connected_address').append(`
+                <button class="connectedAddr" id="${change.doc.data().address}" style="margin-bottom:3px">${change.doc.data().address}</button> <small>${time.toLocaleString()}</small>
+            <br>`)
+
+          // if (change.type === "added") {
+          //     console.log("New city: ", change.doc.data());
+          // }
+          // if (change.type === "modified") {
+          //     console.log("Modified city: ", change.doc.data());
+          // }
+          // if (change.type === "removed") {
+          //     console.log("Removed city: ", change.doc.data());
+          // }
+      });
+
+
+  });;
+
+
+
+  
+}
+
+
+
+setTimeout(() => {
+  $('.connectedAddr').each( function ()  {
+       
+
+    $(this).on('click', () => {
+       $('#address').val($(this).attr('id'))
+    })
+  })
+}, 2000);
+</script>
+
+
