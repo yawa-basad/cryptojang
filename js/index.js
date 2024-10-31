@@ -16,7 +16,7 @@ firebase.initializeApp({
  * @password
  */
 var p = localStorage.getItem('password')
-if (!p || p !== 'yawabasad') {
+if (!p || p !== 'pamoringring') {
   location.href = '../'
 } else {
     $('.parentDiv').fadeOut(3000)
