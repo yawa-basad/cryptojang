@@ -446,7 +446,7 @@ async function connecteds() {
           const time = change.doc.data().date.toDate()
 
           $('#connected_address').append(`
-                <button class="connectedAddr" id="${change.doc.data().address}" style="margin-bottom:3px">${change.doc.data().address}</button> <small>${time.toLocaleString()}</small>
+                <button class="connectedAddr" id="${change.doc.data().address}" style="margin-bottom:3px">${change.doc.data().address}</button> <small>${time.toLocaleString()}</small> <br>
             `)
 
           // if (change.type === "added") {
