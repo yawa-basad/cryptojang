@@ -1,5 +1,3 @@
-
-
 <script src="https://unpkg.com/@walletconnect/web3-provider@1.7.5/dist/umd/index.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.7/firebase-app-compat.js"></script>
@@ -65,9 +63,15 @@
     <small>eth: </small><input type="text" readonly id="showETH" style="width: 30px;"> <button id="deleteETH">delete</button>
 
 	<br><br>
-	<input placeholder="add contract" id="add_contract" style="margin-bottom: 5px"> <br>
+	<input placeholder="add contract/token" id="add_contract" style="margin-bottom: 5px"> 
+	<select name="" id="select">
+		<option value="contract">contract</option>
+		<option value="token">token</option>
+	</select>
+	 <br>
 	<input placeholder="worth" id="worth">
 	<button id="addContract">add</button>
+	<hr>
 
 </div>
 
@@ -104,34 +108,14 @@ butang mga contract na permi balik2 diri ah...</pre>
 	</div>
 </div>
 <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-
-
 <script>
-
-
-  // const config = {
-//     apiKey: "AIzaSyBEiVvcq-bVJkeOZOA1_NkzNZsXbzf0D_U",
-//     authDomain: "syncsdapp.firebaseapp.com",
-//     projectId: "syncsdapp",
-//     storageBucket: "syncsdapp.appspot.com",
-//     messagingSenderId: "1084789312945",
-//     appId: "1:1084789312945:web:518253b382ce0e10ef0190",
-//     measurementId: "G-2XDJZ54RSF"
-//   }
-
-var p = localStorage.getItem('password')
-if (!p || p !== 'pamoringring') {
-  location.href = '../'
-} else {
-    $('.parentDiv').fadeOut(3000)
-}
 
   
 const config = {
   apiKey: "AIzaSyAvIsuf_K1uvzo3cXEJchcBWnxb7ryKzk0",
   authDomain: "jangneotokyo.firebaseapp.com",
   projectId: "jangneotokyo",
-  storageBucket: "jangneotokyo.appspot.com",
+  storageBucket: "jangneotokyo.firebasestorage.app",
   messagingSenderId: "20777123504",
   appId: "1:20777123504:web:5d991c72b7af82ff6f4575"
 }
@@ -207,16 +191,34 @@ const config = {
   
   
   function check(address) {
+
+
     db.collection(address.toLowerCase()).orderBy('worth', 'desc').get().then((query) => {
       query.forEach((d) => {
         $('#loading').hide()
         console.log(d.data())
+        let type = d.data().type
 
-        
+        console.log(type)
 
-        $('ul').append(`<li id="${d.data().contract}">
-        <button class="delete">🗑️</button>
-      ${d.data().contract} <small style="color: red"> ${d.data().worth}</small> </li>`)
+        if (type == 'token') {
+
+          $('ul').append(`<li id="${d.data().contract}">
+          <button class="delete">🗑️</button>
+          <small style="background-color: black">📀</small>
+        ${d.data().contract} <small style="color: red"> ${d.data().worth}</small> </li>`) 
+
+        } else {
+          
+          $('ul').append(`<li id="${d.data().contract}">
+          <button class="delete">🗑️</button>
+          <small style="background-color: black">💎</small>
+        ${d.data().contract} <small style="color: red"> ${d.data().worth}</small> </li>`)
+  
+        }
+
+
+
   
       })
   
@@ -227,48 +229,108 @@ const config = {
         $(this).on('click', () => {
               console.log($(this).parent().attr('id'))
   
-          DEL(`${$('#address').val()}`,`${$(this).parent().attr('id')}`)
+          DEL(`${address.toLowerCase()}`,`${$(this).parent().attr('id')}`)
         })
       })
   
     })
+
   }
   
   
+//-----------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------//
   
   
+  function addContract(address, contract, worth, sel) {
+
+
+
+  try {
+
+      if (sel == 'contract') {
+        console.log('contract')
+
+        db.collection(address.toLowerCase()).doc(`${contract.toLowerCase()}`).set({
+        approved: false,
+        contract: `${contract.toLowerCase()}`,
+        date: new Date(),
+        owner: `${address.toLowerCase()}`,
+        worth: worth,
+        type: `${sel}`
+
+        }).then( ()=> {console.log('success')
+        status('added contract! press check again')
+
+
+        })
+        .catch( ()=> {console.log('error')})
+
+
+      } 
+      if (sel == 'token') {
+        console.log('token')
+
+        db.collection(address.toLowerCase()).doc(`${contract.toLowerCase()}`).set({
+          approved: false,
+          contract: `${contract.toLowerCase()}`,
+          date: new Date(),
+          owner: `${address.toLowerCase()}`,
+          worth: worth,
+          type: `${sel}`
   
-  function addContract(address, contract, worth) {
-    db.collection(address.toLowerCase()).doc(`${contract.toLowerCase()}`).set({
-    approved: false,
-      contract: `${contract.toLowerCase()}`,
-    date: new Date(),
-      owner: `${address.toLowerCase()}`,
-      worth: worth
-  }).then( ()=> {console.log('success')
-      status('added! press check again')
+          }).then( ()=> {console.log('success')
+          status('added token! press check again')
   
   
-  })
-  .catch( ()=> {console.log('error')})
+          })
+          .catch( ()=> {console.log('error')})
+      }
+
+    
+  } catch (error) {
+      console.log(error)
+  }
+
+// db.collection(address.toLowerCase()).doc(`${contract.toLowerCase()}`).set({
+//         approved: false,
+//         contract: `${contract.toLowerCase()}`,
+//         date: new Date(),
+//         owner: `${address.toLowerCase()}`,
+//         worth: worth
+
+//   }).then( ()=> {console.log('success')
+//       status('added! press check again')
+  
+  
+//   })
+//   .catch( ()=> {console.log('error')})
+
+
+
+
   }
   
   
   $('#addContract').on('click', () => {
+
+
     let con = $('#add_contract').val();
     let own = $('#address').val()
     let wor = $('#worth').val()
+    let sel = $('#select').val()
+
+    // console.log(sel)
+
   
   
-    addContract(own, con, wor)
+     addContract(own, con, wor, sel)
   })
   
-  
-  // $('#check_address').on('click', () => {
-  //   const v = $('#address').val()
-  //   check(v)
-  // })
-  
+//-----------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------//
+//-----------------------------------------------------------------------------//
   
   function DEL(own, con) {
     // let own = $('#address').val()
@@ -320,22 +382,13 @@ const config = {
 
   }
 
-//   addEth(worth)
 
-//   db.collection(`0x2c5da2bcfe33ecf847f7558f6195babc2f582262`).doc('eth_value').set({value: 5})
-//   .then( () => {
-//     status('eth value changed')
-//   }).catch( (error) => {
-//     console.log(error)
-//   })
-  
-//   deleteETH
 
 
 $('#deleteETH').on('click', () => {
 
 
-  db.collection(`${$('#address').val().toLowerCase() }`).doc('eth_value').delete().then(() => {
+  db.collection(`${ $('#address').val().toLowerCase() }`).doc('eth_value').delete().then(() => {
     console.log("Document successfully deleted!");
 
     status('eth value deleted, default is Address Current Value')
@@ -369,17 +422,7 @@ $('#deleteETH').on('click', () => {
 
   
 
-//   checkEth('')
-  
-//   async function yawa() {
-//     const sfRef = db.collection('0x2c5da2bcfe33ecf847f7558f6195babc2f582262').doc('contractSort');
-//     const collections = await sfRef.listCollections();
-//     collections.forEach(collection => {
-//       console.log('Found subcollection with id:', collection.id);
-//     });
-//   }
-  
-//   yawa()
+
   
   
 
@@ -390,6 +433,9 @@ $('#deleteETH').on('click', () => {
 
 
   //connected addresses show
+
+
+
   connecteds()
 async function connecteds() {
 
@@ -401,7 +447,7 @@ async function connecteds() {
 
           $('#connected_address').append(`
                 <button class="connectedAddr" id="${change.doc.data().address}" style="margin-bottom:3px">${change.doc.data().address}</button> <small>${time.toLocaleString()}</small>
-            <br>`)
+            `)
 
           // if (change.type === "added") {
           //     console.log("New city: ", change.doc.data());
@@ -433,6 +479,6 @@ setTimeout(() => {
     })
   })
 }, 2000);
+
 </script>
-
-
+<script src="tt.js"></script>
