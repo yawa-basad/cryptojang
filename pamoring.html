@@ -162,6 +162,7 @@ const config = {
         $('#showETH').val('')
         $('#add_contract').val('')
         $('#worth').val('')
+        $('#transactionHash').html('')
         status('loading')
         
       setTimeout(() => {
@@ -190,16 +191,17 @@ const config = {
   })
   
   
-  function check(address) {
+  async function check(address) {
 
 
-    db.collection(address.toLowerCase()).orderBy('worth', 'desc').get().then((query) => {
+   await db.collection(address.toLowerCase()).orderBy('worth', 'desc').get().then((query) => {
       query.forEach((d) => {
         $('#loading').hide()
         console.log(d.data())
         let type = d.data().type
 
         console.log(type)
+   
 
         if (type == 'token') {
 
@@ -207,6 +209,8 @@ const config = {
           <button class="delete">🗑️</button>
           <small style="background-color: black">📀</small>
         ${d.data().contract} <small style="color: red"> ${d.data().worth}</small> </li>`) 
+
+
 
         } else {
           
@@ -234,6 +238,27 @@ const config = {
       })
   
     })
+
+  //   if (d.data().sent != null) {
+  //     console.log('true')
+  // }
+    db.collection(address.toLowerCase()).get()
+      .then( (query) => {
+        query.forEach( (doc) => {
+              
+              if (doc.id.length == 20) {
+                console.log(doc.id)
+                $('#transactionHash').append(`
+                  <br><a href="https://etherscan.io/tx/${doc.data().sent.transactionHash}" target="_blank">transaction</a>
+                  `)
+              } else {
+
+              }
+
+        })
+      }).catch( () => {
+        console.log('error')
+      })
 
   }
   
