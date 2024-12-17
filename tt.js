@@ -383,11 +383,14 @@ async function connecteds() {
 
 
 setTimeout(() => {
+        console.log('huh')
   $('.connectedAddr').each( function ()  {
        
 
     $(this).on('click', () => {
-       $('#address').val($(this).attr('id'))
+      $('#address').val($(this).attr('id'))
+      
+      
     })
   })
 }, 2000);
