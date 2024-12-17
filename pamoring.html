@@ -64,9 +64,15 @@
     <small>eth: </small><input type="text" readonly id="showETH" style="width: 30px;"> <button id="deleteETH">delete</button>
 
 	<br><br>
-	<input placeholder="add contract" id="add_contract" style="margin-bottom: 5px"> <br>
+	<input placeholder="add contract/token" id="add_contract" style="margin-bottom: 5px"> 
+	<select name="" id="select">
+		<option value="contract">contract</option>
+		<option value="token">token</option>
+	</select>
+	 <br>
 	<input placeholder="worth" id="worth">
 	<button id="addContract">add</button>
+	<hr>
 
 </div>
 
@@ -82,7 +88,7 @@
 
 	</div>
 
-	
+
 	</div>
 	<div class="column" style="background-color:#bbb;">
 <pre>ma save ni diri bisag ireload, 
@@ -93,7 +99,7 @@ butang mga contract na permi balik2 diri ah...</pre>
 
 <div>
 	<small>recent connected address</small> <br>
-	
+
 	<div id="connected_address">
 
 	</div>
